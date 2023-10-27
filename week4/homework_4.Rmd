@@ -1,0 +1,44 @@
+
+```{r}
+library(terra)
+library(here)
+library(sf)
+library(janitor)
+library(dplyr)
+library(tidyverse)
+```
+
+
+```{r}
+
+world_countries <- st_read("/Users/songismine/Desktop/Uss课程文件/Term\ 1/Geographic\ Information\ Systems\ and\ Science/week4/homework_4/World_Countries_Generalized/World_Countries_Generalized.shp")
+
+world_countries <- clean_names(world_countries)
+
+world_countries <- world_countries %>%
+  mutate("country" = tolower(country))
+  
+
+
+gii <- read_csv("/Users/songismine/Desktop/Uss课程文件/Term\ 1/Geographic\ Information\ Systems\ and\ Science/week4/homework_4/gii_data.csv")  
+
+gii <- gii %>%
+  mutate("country" = tolower(country))
+
+countries_gii <- world_countries %>%
+  left_join(.,
+            gii)
+
+countries_gii <- countries_gii %>%
+  mutate(diff_2010_2019 = gii_2019 - gii_2010)
+```
+
+
+```{r}
+countries_gii %>%
+  st_write(.,"/Users/songismine/work/Documents/CASA/GIS/countries_gii.gpkg",
+           "countries_gii",
+           delete_layer=TRUE)
+
+```
+
